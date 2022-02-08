@@ -1,7 +1,12 @@
 const tileDisplay = document.querySelector('.tile-container')
-const keyDisplay = document.querySelector('.key-container')
+const keyboard = document.querySelector('.key-container')
 const messageDisplay = document.querySelector('.message-container')
 
+let currentRow = 0
+let currentTile = 0
+let isGameOver = false
+
+const wordle = 'super'
 const keys = [
     'Q',
     'W',
@@ -55,8 +60,38 @@ guessRows.forEach((guessRow, guessRowIndex) => {
 })
 
 
-const handleClick = () => {
-    console.log("clicked")
+const handleClick = (letter) => {
+    if (!isGameOver) {
+        if (letter === '«') {
+            deleteLetter()
+            return
+        }
+        if (letter === 'ENTER') {
+            checkRow()
+            return
+        }
+        addLetter(letter)
+    }
+}
+
+const addLetter = (letter) => {
+    if (currentTile < 5 && currentRow < 6) {
+        const tile = document.getElementById('guessRow-' + currentRow + '-tile-' + currentTile)
+        tile.textContent = letter
+        guessRows[currentRow][currentTile] = letter
+        tile.setAttribute('data', letter)
+        currentTile++
+    }
+}
+
+const deleteLetter = () => {
+    if (currentTile > 0) {
+        currentTile--
+        const tile = document.getElementById('guessRow-' + currentRow + '-tile-' + currentTile)
+        tile.textContent = ''
+        guessRows[currentRow][currentTile] = ''
+        tile.setAttribute('data', '')
+    }
 }
 
 keys.forEach(key => {
@@ -64,5 +99,5 @@ keys.forEach(key => {
     buttonElement.textContent = key
     buttonElement.setAttribute('id', key)
     buttonElement.addEventListener('click', () => handleClick(key))
-    keyDisplay.append(buttonElement)
+    keyboard.append(buttonElement)
 })
