@@ -6,7 +6,7 @@ let currentRow = 0
 let currentTile = 0
 let isGameOver = false
 
-const wordle = 'super'
+const wordle = 'SUPER'
 const keys = [
     'Q',
     'W',
@@ -94,6 +94,28 @@ const deleteLetter = () => {
     }
 }
 
+const checkRow = () => {
+    const guess = guessRows[currentRow].join('')
+    if(currentTile > 4) {
+        flipTiles()
+        if(wordle == guess) {
+            
+            isGameOver = true
+            return
+        } else {
+            if(currentRow >= 5) {
+                isGameOver = false
+                
+                return
+            }
+            if(currentRow < 5) {
+                currentRow++
+                currentTile = 0
+            }
+        }
+    }
+}
+
 keys.forEach(key => {
     const buttonElement = document.createElement('button')
     buttonElement.textContent = key
@@ -101,3 +123,54 @@ keys.forEach(key => {
     buttonElement.addEventListener('click', () => handleClick(key))
     keyboard.append(buttonElement)
 })
+
+const showMessage = (message) => {
+    const messageElement = document.createElement('p')
+    messageElement.textContent = message
+    messageDisplay.append(messageElement)
+    setTimeout(() => messageDisplay.removeChild(messageElement), 5000)
+}
+
+const addColorToKey = (keyLetter, color) => {
+    const key = document.getElementById(keyLetter)
+    key.classList.add(color)
+}
+
+const flipTiles = () => {
+   const rowTiles = document.querySelector('#guessRow-' + currentRow).childNodes
+   let checkWordle = wordle
+   const guess = []
+
+   rowTiles.forEach(tile => {
+       guess.push({letter: tile.getAttribute('data'), color: 'gray-overlay'})
+   })
+
+   guess.forEach((guess, index) => {
+       if (guess.letter == wordle[index]) {
+           guess.color = 'green-overlay'
+           checkWordle = checkWordle.replace(guess.letter, '')
+       }
+   })
+
+   guess.forEach(guess => {
+       if(checkWordle.includes(guess.letter)) {
+           guess.color = 'yellow-overlay'
+           checkWordle = checkWordle.replace(guess.letter, '')
+       }
+   })
+
+
+
+   rowTiles.forEach((tile, index) => {
+       const dataLetter = tile.getAttribute('data')
+
+       setTimeout(() => {
+        tile.classList.add('flip')
+        tile.classList.add(guess[index].color)
+        addColorToKey(guess[index].letter, guess[index].color)
+
+       }, 500 * index)
+       
+       
+   })
+}
