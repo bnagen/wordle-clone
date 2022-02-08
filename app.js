@@ -6,7 +6,19 @@ let currentRow = 0
 let currentTile = 0
 let isGameOver = false
 
-const wordle = 'SUPER'
+let wordle
+const getWordle = () => {
+    fetch('http://localhost:8000/word')
+    .then(response => response.json())
+    .then(json => {
+       // console.log(json)
+        wordle = json.toUpperCase()
+    })
+    .catch(err => console.log(err))
+}
+
+getWordle()
+
 const keys = [
     'Q',
     'W',
